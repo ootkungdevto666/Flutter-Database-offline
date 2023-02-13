@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app/person.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,8 +38,16 @@ $columnAge TEXT NOT NULL)
 ''');
   }
 
+//old insert function
+/* 
   Future<int> insert(Map<String, dynamic> row) async {
     Database db = await instance.database;
     return await db.insert(table, row);
+  }
+*/
+
+  Future<int> insert2(person p) async {
+    Database db = await instance.database;
+    return await db.insert(table,p.toJson());
   }
 }
