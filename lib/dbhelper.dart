@@ -48,6 +48,21 @@ $columnAge TEXT NOT NULL)
 
   Future<int> insert2(person p) async {
     Database db = await instance.database;
-    return await db.insert(table,p.toJson());
+    return await db.insert(table, p.toJson());
   }
+
+  //get all
+  Future<List<Map<String, dynamic>>> queryAllRow() async {
+    Database db = await instance.database;
+    return await db.query(table);
+  }
+
+  Future<int?> queryRoundCount() async {
+  Database db = await instance.database;
+  return Sqflite.firstIntValue(
+    await db.rawQuery("Select count(*) from $table")
+  );
 }
+
+}
+

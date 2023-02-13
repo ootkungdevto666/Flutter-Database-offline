@@ -66,7 +66,7 @@ class _MyWidgetState extends State<MyWidget> {
               children: [
                 TextField(
                   controller: tid,
-                  decoration: InputDecoration(hintText: "Person Name"),
+                  decoration: InputDecoration(hintText: "Person ID"),
                 ),
                 TextField(
                   controller: tname,
@@ -74,16 +74,16 @@ class _MyWidgetState extends State<MyWidget> {
                 ),
                 TextField(
                   controller: tage,
-                  decoration: InputDecoration(hintText: "Person Name"),
+                  decoration: InputDecoration(hintText: "Person Age"),
                 ),
               ],
             ),
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  _db.insert2(person(id:tid as int, name: tname as String, age: tage as int));
+                  _db.insert2(person(id:tid.text as int, name: tname.text , age: tage.text as int));
                 },
-                child: Text("+add"),
+                child: const Text("save"),
               )
             ],
           ),
