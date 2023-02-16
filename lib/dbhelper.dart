@@ -52,9 +52,10 @@ $columnAge TEXT NOT NULL)
   }
 
   //get all
-  Future<List<Map<String, dynamic>>> queryAllRow() async {
+  Future<List<person>> queryAllRow() async {
     Database db = await instance.database;
-    return await db.query(table);
+    final result  = await db.query(table);
+    return result.map((json) => person.fromJson(json)).toList();
   }
 
   Future<int?> queryRoundCount() async {

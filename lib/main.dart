@@ -28,11 +28,19 @@ class MyWidget extends StatefulWidget {
 
 class _MyWidgetState extends State<MyWidget> {
   late Db_helper _db;
+  late Future<List<person>> p;
   
   @override
   void initState(){
     super.initState();
     _db = Db_helper.instance;
+    _loaddata();
+  }
+
+  _loaddata() async {
+    _db = Db_helper.instance;
+    p = _db.queryAllRow();
+    print(p.toString());
   }
   @override
   Widget build(BuildContext context) {
@@ -46,6 +54,26 @@ class _MyWidgetState extends State<MyWidget> {
           ElevatedButton(
             onPressed: (() => addPeron(context)),
             child: const Text('Add Person'),
+          ),
+          Center(
+            child: FutureBuilder(
+              future: p,
+              builder: ((context, snapshot) {
+                if(snapshot.hasData){
+                  return Column(
+                    children: [
+                      Text("AAA"),
+                    ],
+                  );
+                }else{
+                  return Column(
+                    children: [
+                        Text("NA"),
+                    ],
+                  );
+                }
+              }),
+            ),
           )
         ],
       ),
@@ -81,7 +109,7 @@ class _MyWidgetState extends State<MyWidget> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  _db.insert2(person(id:tid.text as int, name: tname.text , age: tage.text as int));
+                  _db.insert2(person(id:int.parse(tid.text), name: tname.text , age: int.parse(tage.text)));
                 },
                 child: const Text("save"),
               )
