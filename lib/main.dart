@@ -1,122 +1,41 @@
-import 'dart:convert';
-
-import 'package:app/dbhelper.dart';
-import 'package:app/person.dart';
 import 'package:flutter/material.dart';
-import 'package:app/dbhelper.dart';
-
-void main() {
-  runApp(const MyApp());
-}
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ignore: prefer_const_constructors
-    return MaterialApp(title: "", home: MyWidget());
+    return MaterialApp(
+      title: "MyApp",
+      home: MyHomePage(),
+    );
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
-  late Db_helper _db;
-  late Future<List<person>> p;
-  
-  @override
-  void initState(){
-    super.initState();
-    _db = Db_helper.instance;
-    _loaddata();
-  }
-
-  _loaddata() async {
-    _db = Db_helper.instance;
-    p = _db.queryAllRow();
-    print(p.toString());
-  }
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Test"),
+        title: Text("MyHome"),
       ),
       body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: (() => addPeron(context)),
-            child: const Text('Add Person'),
-          ),
-          Center(
-            child: FutureBuilder(
-              future: p,
-              builder: ((context, snapshot) {
-                if(snapshot.hasData){
-                  return Column(
-                    children: [
-                      Text("AAA"),
-                    ],
-                  );
-                }else{
-                  return Column(
-                    children: [
-                        Text("NA"),
-                    ],
-                  );
-                }
-              }),
-            ),
+          Container(
+            child: Text("Hello World"),
           )
         ],
       ),
-    );
-  }
-
-  Future<void> addPeron(BuildContext context) {
-    TextEditingController tid = TextEditingController();
-    TextEditingController tname = TextEditingController();
-    TextEditingController tage = TextEditingController();
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: AlertDialog(
-            title: Text("Add New Person"),
-            content: Column(
-              children: [
-                TextField(
-                  controller: tid,
-                  decoration: InputDecoration(hintText: "Person ID"),
-                ),
-                TextField(
-                  controller: tname,
-                  decoration: InputDecoration(hintText: "Person Name"),
-                ),
-                TextField(
-                  controller: tage,
-                  decoration: InputDecoration(hintText: "Person Age"),
-                ),
-              ],
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  _db.insert2(person(id:int.parse(tid.text), name: tname.text , age: int.parse(tage.text)));
-                },
-                child: const Text("save"),
-              )
-            ],
-          ),
-        );
-      },
     );
   }
 }
