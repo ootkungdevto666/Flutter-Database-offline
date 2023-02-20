@@ -57,10 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(
             height: 250,
-            child: Column(
-              children: [SingleChildScrollView(
-                child: buildlist(),
-              )],
+            child: SingleChildScrollView(
+              child: buildlist(),
             ),
           )
         ],
