@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-class personfields {
-  static final List<String> data = [id, name, age];
-  static const String id = '_id';
-  static const String name = 'name';
-  static const String age = 'age';
-}
+// class personfields {
+//   static final List<String> data = [id, name, age];
+//   static const String id = '_id';
+//   static const String name = 'name';
+//   static const String age = 'age';
+// }
 
 // ignore: camel_case_types
 class person {
@@ -15,12 +15,18 @@ class person {
 
   const person({required this.id, required this.name, required this.age});
 
+  static final Map<String,dynamic> info ={
+    "id":"id",
+    "name":"name",
+    "age":"age",
+  };
 
   person copy({int? id,String? name,int? age})=>person(
     id:id ?? this.id, 
     name:name ?? this.name, 
     age: age ?? this.age
   );
+
   static person fromJson(Map<String, Object?> json) => person(
       id: json["id"] as int,
       name: json["name"] as String,
@@ -28,10 +34,10 @@ class person {
   );
 
   Map<String , Object> toJson() => {
-    personfields.id :id,
-    personfields.name:name,
-    personfields.age:age,
-  };
+    info["id"]:id,
+    info["name"]:name,
+    info["age"]:age,
+ };
 
 
 }

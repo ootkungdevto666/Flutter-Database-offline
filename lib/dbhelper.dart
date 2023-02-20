@@ -5,10 +5,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Db_helper {
-  static const _databaseName = "MyDb.db";
+  static const _databaseName = "MyDb4.db";
   static final _databaseVersion = 1;
-  static final table = 'my_table';
-  static final columnId = '_id';
+  static final table = 'person';
+  static final columnId = 'id';
   static final columnName = 'name';
   static final columnAge = 'age';
 
@@ -34,7 +34,7 @@ class Db_helper {
 CREATE TABLE $table(
 $columnId INTEGER PRIMARY KEY,
 $columnName TEXT NOT NULL,
-$columnAge TEXT NOT NULL)
+$columnAge INTEGER NOT NULL)
 ''');
   }
 
@@ -46,16 +46,15 @@ $columnAge TEXT NOT NULL)
   }
 */
 
-  Future<int> insert2(person p) async {
+  Future<int> insert2(Map<String,dynamic> row) async {
     Database db = await instance.database;
-    return await db.insert(table, p.toJson());
+    return await db.insert(table, row);
   }
 
   //get all
-  Future<List<person>> queryAllRow() async {
+  Future<List<Map<String,dynamic>>> queryAllRow() async {
     Database db = await instance.database;
-    final result  = await db.query(table);
-    return result.map((json) => person.fromJson(json)).toList();
+    return await db.query(table);
   }
 
   Future<int?> queryRoundCount() async {
@@ -63,6 +62,22 @@ $columnAge TEXT NOT NULL)
   return Sqflite.firstIntValue(
     await db.rawQuery("Select count(*) from $table")
   );
+}
+
+Future<int> update(Map<String, dynamic> row) async {
+  Database db = await instance.database;
+  int id = row[columnId];
+  return await db.update(
+    table,
+    row,
+    where: '$columnId= ?',
+    whereArgs: [id],
+  );
+}
+
+Future<int> delete(int id) async {
+  Database db = await instance.database;
+  return await db.delete(table,where: '$columnId=?',whereArgs:[id],);
 }
 
 }

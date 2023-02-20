@@ -1,4 +1,7 @@
+import 'package:app/dbhelper.dart';
+import 'package:app/person.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,7 +27,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Db_helper _db;
   String text = "";
+  List<Map<String, dynamic>> Person_data = [];
+  /*
   List<Map<String, dynamic>> Person_data = [
     {"id": 1, "name": "jirapas", "age": 23},
     {"id": 2, "name": "miyu", "age": 22},
@@ -36,11 +42,19 @@ class _MyHomePageState extends State<MyHomePage> {
     {"id": 8, "name": "miyu", "age": 22},
     {"id": 9, "name": "sisbel", "age": 19},
   ];
+*/
+
+  loaddata() async {
+    Database db = await Db_helper.instance.database;
+    Person_data = await db.query(Db_helper.table);
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    text = Person_data.toString();
+    //text = Person_data.toString();
+    loaddata();
   }
 
   @override
@@ -52,13 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            child: Text(""),
+          Column(
+            children: [
+              ElevatedButton(onPressed: () => todo(), child: Text("todo")),
+              ElevatedButton(
+                  onPressed: () => inputAlert(context),
+                  child: Text("add person"))
+            ],
           ),
           SizedBox(
             height: 250,
             child: SingleChildScrollView(
-              child: buildlist(),
+              child: buildlistJson(),
             ),
           )
         ],
@@ -78,5 +97,101 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ).toList(),
     );
+  }
+
+  Widget buildlistJson() {
+    List<person> p = Person_data.map((json) => person.fromJson(json)).toList();
+    return Column(
+      children: p
+          .map(
+            (list) => Card(
+              child: ListTile(
+                title: Text("${list.id} : ${list.name}"),
+                subtitle: Text("${list.age}"),
+                trailing: Row(
+                  children: [
+                    IconButton(
+                      onPressed: (){
+                        deletePerson(list.id);
+                      }, 
+                      icon: Icon(Icons.dangerous),
+                      )
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  void todo() async {
+    Db_helper db = Db_helper.instance;
+    person person_data = person(id: 4, name: "jirapas", age: 23);
+    db.insert2(person_data.toJson());
+    Person_data = await db.queryAllRow();
+    setState(() {});
+  }
+
+  void insert(int id, String name, int age) async {
+    Db_helper db = Db_helper.instance;
+    person person_data = person(id: id, name: name, age: age);
+    db.insert2(person_data.toJson());
+    Person_data = await db.queryAllRow();
+    setState(() {});
+  }
+
+  inputAlert(BuildContext context) {
+    int Pid;
+    String name;
+    int Page;
+    TextEditingController t1 = TextEditingController();
+    TextEditingController t2 = TextEditingController();
+    TextEditingController t3 = TextEditingController();
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Enter Person data"),
+            content: Column(
+              //mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+       
+                TextField(
+                  controller: t1,
+                  decoration: InputDecoration(hintText: "input your id"),
+
+                ),
+            
+                TextField(
+                  controller: t2,
+                  decoration: InputDecoration(hintText: "input your name"),
+
+                ),
+            
+                TextField(
+                  controller: t3,
+                  decoration: InputDecoration(hintText: "input your age"),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                  onPressed: (() {
+                    insert(int.parse(t1.text), t2.text, int.parse(t3.text));
+                    Navigator.of(context).pop();
+                  }),
+                  child: Text("add")),
+            ],
+          );
+        });
+  }
+  
+  void deletePerson(int id) async{
+    Db_helper db = Db_helper.instance;
+    db.delete(id);
+    Person_data = await db.queryAllRow();
+    setState(() {});
   }
 }
